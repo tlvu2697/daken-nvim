@@ -44,4 +44,22 @@ M.tabclose = function()
   end
 end
 
+-- Does: quit and focus on previous buffer
+M.smart_quit = function()
+  if vim.bo.filetype == 'qf' then
+    vim.cmd('quit')
+  elseif vim.fn.winnr("$") == 1 and vim.fn.tabpagenr("$") > 1 then
+    if vim.fn.tabpagenr() > 1 and vim.fn.tabpagenr() < vim.fn.tabpagenr("$") then
+      vim.cmd('tabclose | tabprev')
+    else
+      vim.cmd('quit')
+    end
+  else
+    if not pcall(vim.cmd, 'close') then
+      vim.api.nvim_echo({ { 'E444: Cannot close last window', 'ErrorMsg' } }, true, {})
+    end
+    vim.cmd('wincmd p')
+  end
+end
+
 return M
