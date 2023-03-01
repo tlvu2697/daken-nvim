@@ -1,6 +1,6 @@
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = { 'ruby', 'dockerfile', 'yaml', 'lua', 'bash', 'json', 'javascript', 'tsx', 'typescript',
-                       'scss', 'css', 'http', 'markdown' },
+  ensure_installed = { 'ruby', 'go', 'dockerfile', 'yaml', 'lua', 'bash', 'json', 'javascript', 'tsx', 'typescript',
+                       'scss', 'css', 'http', 'markdown', 'java', 'python', 'haskell', 'c', 'cpp' },
   highlight = {
     enable = true,
   },
@@ -15,7 +15,7 @@ require'nvim-treesitter.configs'.setup {
   },
   indent = {
     enable = true,
-    disable = { 'ruby' },
+    disable = { 'ruby', 'go' },
   },
   autotag = {
     enable = true,

@@ -31,6 +31,11 @@ local eslint = {
   formatStdin = true
 }
 
+local golangci_lint = {
+  lintCommand = "golangci-lint run ${INPUT}",
+  lintStdin = true,
+}
+
 -- local function eslint_config_exists()
 --   local eslintrc = vim.fn.glob(".eslintrc*", 0, 1)
 
@@ -49,7 +54,7 @@ local eslint = {
 
 -- cmp
 -- ======================================
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 -- Servers config
 -- ======================================
@@ -87,21 +92,23 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<leader>l', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
 
   -- Set some keybinds conditional on server capabilities
-  if client.resolved_capabilities.document_formatting
-    or client.resolved_capabilities.document_range_formatting then
-    buf_set_keymap("n", "<space>lf", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  if client.server_capabilities.documentFormattingProvider
+    or client.server_capabilities.documentRangeFormattingProvider then
+    buf_set_keymap("n", "<space>lf", "<cmd>lua vim.lsp.buf.format({ async = true })<CR>", opts)
   end
 
   -- vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()]]
 end
 
+local lsp_flags = {
+  debounce_text_changes = 150,
+}
+
 -- `gem install solargraph`
 nvim_lsp.solargraph.setup {
   capabilities = capabilities,
   on_attach = on_attach,
-  flags = {
-    debounce_text_changes = 150,
-  },
+  flags = lsp_flags,
   settings = {
     solargraph = {
       useBundler = true,
@@ -109,6 +116,37 @@ nvim_lsp.solargraph.setup {
       autoformat = true
     }
   }
+}
+
+nvim_lsp.sourcekit.setup {
+  capabilities = capabilities,
+  on_attach = on_attach,
+  flags = lsp_flags,
+}
+
+-- go install golang.org/x/tools/gopls@latest
+-- go install github.com/go-delve/delve/cmd/dlv@latest
+nvim_lsp.gopls.setup {
+  capabilities = capabilities,
+  on_attach = function(client, bufnr)
+    local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+    local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+    local opts = { noremap=true, silent=true }
+    on_attach(client, bufnr)
+    buf_set_keymap('n', 'gdd', '<Cmd>:GoDef<CR>', opts)
+    buf_set_keymap('n', 'gdv', [[<Cmd>vs | GoDef<CR>]], opts)
+    buf_set_keymap('n', 'gds', [[<Cmd>split | GoDef<CR>]], opts)
+    buf_set_keymap('n', 'gdt', [[<Cmd>tab split | GoDef<CR>]], opts)
+  end,
+  flags = lsp_flags,
+}
+
+-- https://download.eclipse.org/jdtls/snapshots/?d
+-- Link bin folder to PATH
+nvim_lsp.jdtls.setup{
+  capabilities = capabilities,
+  on_attach = on_attach,
+  flags = lsp_flags,
 }
 
 -- `npm install -g typescript`
@@ -119,23 +157,21 @@ nvim_lsp.tsserver.setup {
     if client.config.flags then
       client.config.flags.allow_incremental_sync = true
     end
-    client.resolved_capabilities.document_formatting = false
+    client.server_capabilities.documentFormattingProvider = false
     on_attach(client, bufnr)
   end,
-  flags = {
-    debounce_text_changes = 150,
-  },
+  flags = lsp_flags,
 }
 
 -- `npm install -g eslint_d`
 -- `npm install -g prettier`
 -- `brew install efm-langserver`
+-- `go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest`
 nvim_lsp.efm.setup {
   capabilities = capabilities,
   on_attach = function(client, bufnr)
-    client.resolved_capabilities.document_formatting = true
-    client.resolved_capabilities.goto_definition = false
-
+    client.server_capabilities.documentFormattingProvider = true
+    -- client.resolved_capabilities.goto_definition = false
     on_attach(client, bufnr)
   end,
   -- root_dir = function()
@@ -151,8 +187,9 @@ nvim_lsp.efm.setup {
       typescript = { eslint },
       typescriptreact = { eslint },
       json = { prettier },
+      go = { golangci_lint },
     }
   },
-  filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "json" },
+  filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "json", "go" },
   init_options = { documentFormatting = true, codeAction = true },
 }

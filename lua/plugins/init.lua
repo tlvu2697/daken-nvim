@@ -5,9 +5,11 @@ require('packer').startup(function()
   use { 'kyazdani42/nvim-web-devicons', config = "require'nvim-web-devicons'.setup {}" }
   use 'nvim-lualine/lualine.nvim'
   use 'rmehri01/onenord.nvim'
+  -- use 'EdenEast/nightfox.nvim'
   -- use 'shaunsingh/nord.nvim'
   -- use 'Th3Whit3Wolf/one-nvim'
   -- use 'romgrk/github-light.vim'
+  -- use 'NTBBloodbath/doom-one.nvim'
 
   -- Group: TPope
   use 'https://tpope.io/vim/surround.git'
@@ -18,7 +20,7 @@ require('packer').startup(function()
   use 'https://tpope.io/vim/vinegar.git'
   use 'https://tpope.io/vim/bundler.git'
   use { 'https://tpope.io/vim/repeat.git', branch = 'no-feedkeys' }
-  use { 'dakennguyen/vim-unimpaired', branch = 'minimal' }
+  use 'dakennguyen/vim-unimpaired'
 
   -- Group: Language support
   use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
@@ -32,14 +34,16 @@ require('packer').startup(function()
   use 'andymass/vim-matchup'
 
   -- Group: Completion
-  use 'github/copilot.vim'
   use 'hrsh7th/nvim-cmp'
   use 'hrsh7th/cmp-nvim-lsp'
   use 'hrsh7th/cmp-buffer'
   use 'hrsh7th/cmp-path'
+  use 'hrsh7th/cmp-vsnip'
+  use 'hrsh7th/vim-vsnip'
 
   -- Group: Framework support
   use 'vim-test/vim-test'
+  use { 'fatih/vim-go', ft = 'go' }
 
   -- Group: Editing support
   use 'windwp/nvim-autopairs'
@@ -72,7 +76,6 @@ require('packer').startup(function()
     requires = { 'nvim-lua/plenary.nvim' },
     ft = 'http'
   }
-  use 'benmills/vimux'
   use 'lewis6991/impatient.nvim'
 end)
 
@@ -89,7 +92,6 @@ local import = function()
   require('plugins.lua.treesitter')
 
   require('plugins.vimscript.better-whitespace')
-  require('plugins.vimscript.copilot')
   require('plugins.vimscript.easy-align')
   require('plugins.vimscript.fugitive')
   require('plugins.vimscript.fzf')
@@ -100,7 +102,7 @@ local import = function()
   require('plugins.vimscript.projectionist')
   require('plugins.vimscript.splitjoin')
   require('plugins.vimscript.test')
-  require('plugins.vimscript.vimux')
+  require('plugins.vimscript.vsnip')
 end
 
 return {

@@ -4,12 +4,14 @@ map('n', '<space>pi', ':PackerInstall<cr>')
 map('n', '<space>pc', ':PackerClean<cr>')
 
 -- General
+map('n', '<leader>0', ':e<cr>')
 map('n', '<space>rl', '<cmd>lua require("utils").reload_config()<cr>')
 map('n', '<space>so', ':source %<CR>:PackerCompile<cr>')
 map('n', '<leader><space>', ':noh<cr>', { silent = true })
 map('n', '<leader>s', ':w<cr>', { silent = true })
 map('n', '<leader>a', '<C-^>')
 map('n', '!', ':!')
+map('n', '0', '^')
 map("", "$", "g_", { silent = true })
 
 -- jk
@@ -17,8 +19,13 @@ map('n', 'j', '<cmd>lua require("utils").jump("j")<cr>', { silent = true })
 map('n', 'k', '<cmd>lua require("utils").jump("k")<cr>', { silent = true })
 
 -- search
-map('v', '#', [[y?\V<C-R>=escape(@",'/\')<CR><CR>]])
-map('v', '*', [[y/\V<C-R>=escape(@",'/\')<CR><CR>]])
+map('n', '#', '#<S-N>', { silent = true })
+map('n', '*', '*<S-N>', { silent = true })
+map('v', '#', [[y?\V<C-R>=escape(@",'/\')<CR><CR><S-N>]])
+map('v', '*', [[y/\V<C-R>=escape(@",'/\')<CR><CR><S-N>]])
+
+-- replace
+map('v', '<leader>er', [[y/\V<C-R>=escape(@",'/\')<CR><CR>:%s/<C-r>"/]])
 
 -- quit
 map('n', '<leader>q', '<cmd>lua require("utils").smart_quit()<cr>', { silent = true })
@@ -76,6 +83,8 @@ map('n', '<c-]><c-p>', '<c-w>g}')
 -- tab
 map('n', ']<tab>', 'gt')
 map('n', '[<tab>', 'gT')
+map('t', ']<tab>', '<c-\\><c-n>Ggt')
+map('t', '[<tab>', '<c-\\><c-n>GgT')
 map('n', '<c-w><c-l>', '<cmd>+1tabmove<cr>')
 map('n', '<c-w>l',     '<cmd>+1tabmove<cr>')
 map('n', '<c-w><c-h>', '<cmd>-1tabmove<cr>')
