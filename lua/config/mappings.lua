@@ -1,12 +1,5 @@
--- Packer
-map('n', '<space>ps', ':PackerSync<cr>')
-map('n', '<space>pi', ':PackerInstall<cr>')
-map('n', '<space>pc', ':PackerClean<cr>')
-
 -- General
 map('n', '<leader>0', ':e<cr>')
-map('n', '<space>rl', '<cmd>lua require("utils").reload_config()<cr>')
-map('n', '<space>so', ':source %<CR>:PackerCompile<cr>')
 map('n', '<leader><space>', ':noh<cr>', { silent = true })
 map('n', '<leader>s', ':w<cr>', { silent = true })
 map('n', '<leader>a', '<C-^>')
@@ -126,6 +119,7 @@ map('n', '<space>gs', ':vert botright 80 new $CLOUD/Notes/scratch.md<CR>', { sil
 map('n', '<space>gt', ':botright 10 new $CLOUD/Notes/todo.md<CR>', { silent = true })
 map('n', '<space>gn', ':vert botright 80 new $CLOUD/Notes/<cr>', { silent = true })
 map('n', '<space>gr', ':tabnew $CLOUD/Rests/<cr>', { silent = true })
+map('n', '<space>gh', ':vnew local.http<cr>', { silent = true })
 
 -- open files in chrome
 map('n', '<leader>fp', [[<cmd>!open -a 'google chrome' '%:p'<cr>]], { silent = true })

@@ -17,22 +17,26 @@ function buf_map(mode, lhs, rhs, opts)
 end
 
 function open_file_command(cmd_char, files)
-  if type(files) == 'string' then
-    vim.cmd(string.format('command! %so edit %s', cmd_char, files))
-    vim.cmd(string.format('command! %ss split %s', cmd_char, files))
-    vim.cmd(string.format('command! %sv vsplit %s', cmd_char, files))
-    vim.cmd(string.format('command! %st tabedit %s', cmd_char, files))
-    return
-  end
-
-  for _, file in ipairs(files) do
+  local assign = function(file)
     if vim.fn.filereadable(file) == 1 then
       vim.cmd(string.format('command! %so edit %s', cmd_char, file))
       vim.cmd(string.format('command! %ss split %s', cmd_char, file))
       vim.cmd(string.format('command! %sv vsplit %s', cmd_char, file))
       vim.cmd(string.format('command! %st tabedit %s', cmd_char, file))
-      return
+
+      return true
     end
+
+    return false
+  end
+
+  if type(files) == 'string' then
+    assign(files)
+    return
+  end
+
+  for _, file in ipairs(files) do
+    if assign(file) then return end
   end
 end
 
@@ -90,4 +94,32 @@ function highlight(group, colors)
   if colors.link then
     vim.cmd("highlight! link " .. group .. " " .. colors.link)
   end
+end
+
+lazy_load = function(plugin)
+  vim.api.nvim_create_autocmd({ "BufRead", "BufWinEnter", "BufNewFile" }, {
+    group = vim.api.nvim_create_augroup("BeLazyOnFileOpen" .. plugin, {}),
+    callback = function()
+      local file = vim.fn.expand "%"
+      local condition = file ~= "NvimTree_1" and file ~= "[lazy]" and file ~= ""
+
+      if condition then
+        vim.api.nvim_del_augroup_by_name("BeLazyOnFileOpen" .. plugin)
+
+        -- dont defer for treesitter as it will show slow highlighting
+        -- This deferring only happens only when we do "nvim filename"
+        if plugin ~= "nvim-treesitter" then
+          vim.schedule(function()
+            require("lazy").load { plugins = plugin }
+
+            if plugin == "nvim-lspconfig" then
+              vim.cmd "silent! do FileType"
+            end
+          end, 0)
+        else
+          require("lazy").load { plugins = plugin }
+        end
+      end
+    end,
+  })
 end
