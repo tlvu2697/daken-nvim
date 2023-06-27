@@ -1,7 +1,7 @@
 local palette = {}
 local custom_colors = {}
 if vim.o.background == 'light' then
-  palette = require('nightfox.palette').load().dayfox
+  palette = require("tokyonight.colors").setup({ transform = true })
   custom_colors = {
     light = '#494b53',
     strong = '#000000',
@@ -12,11 +12,11 @@ if vim.o.background == 'light' then
     diff_remove = "#b95d76",
     diff_remove_bg = "#824d5b",
   }
-  vim.cmd("colorscheme dayfox")
+  vim.cmd("colorscheme tokyonight-day")
 else
-  palette = require('nightfox.palette').load().nightfox
+  palette = require("tokyonight.colors").setup()
   custom_colors = {
-    light = '#BBC2CF',
+    light = '#E1E2E7',
     strong = '#FFFFFF',
     diff_add = "#618774",
     diff_add_bg = "#394E3D",
@@ -25,21 +25,21 @@ else
     diff_remove = "#b95d76",
     diff_remove_bg = "#4D2B2E",
   }
-  vim.cmd("colorscheme nightfox")
+  vim.cmd("colorscheme tokyonight")
 end
 
 return {
   lualine = {
-    default_fg = palette.cyan.dim,
-    default_bg = palette.bg1,
+    default_fg = palette.cyan,
+    default_bg = palette.bg,
     light = custom_colors.light,
-    visual = palette.orange.dim,
-    insert = palette.blue.dim,
-    replace = palette.red.dim,
-    command = palette.magenta.dim,
-    op = palette.green.dim,
-    yellow = palette.yellow.dim,
-    inactive = palette.bg4,
+    visual = palette.orange,
+    insert = palette.blue,
+    replace = palette.red,
+    command = palette.magenta,
+    op = palette.green,
+    yellow = palette.yellow,
+    inactive = palette.bg_dark,
     strong = custom_colors.strong,
   },
   gitsigns = {
